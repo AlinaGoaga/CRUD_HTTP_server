@@ -1,9 +1,12 @@
 package main
 
 import (
+	"encoding/json"
 	"testing"
 	"net/http"
 	"net/http/httptest"
+	"bytes"
+	"fmt"
 )
 
 
@@ -39,7 +42,7 @@ func TestReturnAllBooks(t *testing.T) {
 }
 
 func TestReturnSingleBook(t *testing.T) {
-	req, err := http.NewRequest("GET", "/books/1", nil)
+	req, err := http.NewRequest("GET", "/book/1", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -52,4 +55,25 @@ func TestReturnSingleBook(t *testing.T) {
 		t.Errorf("handler returned unexpected body: got %v want %v",
 			res.Body.String(), expected)
 	}
+}
+
+func TestCreateNewBook(t *testing.T) {
+    payload := []byte(`{"id":"3","title":"Book3","author":"Author3"}`)
+
+	req, err := http.NewRequest("POST", "/book", bytes.NewBuffer(payload))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	res := executeRequest(req)
+	checkResponseCode(t, http.StatusOK, res.Code)
+
+	fmt.Println(res)
+
+	var m map[string]interface{}
+    json.Unmarshal(res.Body.Bytes(), &m)
+
+    if m["id"] != "3" {
+        t.Errorf("Expected book id to be '3'. Got '%v'", m["id"])
+    }
 }

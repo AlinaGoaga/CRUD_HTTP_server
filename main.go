@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"io/ioutil"
 
 	"github.com/gorilla/mux"
 )
@@ -43,14 +44,29 @@ func returnSingleBook(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func createNewBook(w http.ResponseWriter, r *http.Request) {
+	reqBody, _ := ioutil.ReadAll(r.Body)
+
+	// transform the response body to a new Book object which we can then add to the array aka fake database
+	var book Book
+	json.Unmarshal(reqBody, &book)
+		
+	fmt.Println("Endpoint Hit: createNewBook")
+
+    Books = append(Books, book)
+    json.NewEncoder(w).Encode(book)
+}
+
 func handleRequests() {
-	muxRouter := mux.NewRouter().StrictSlash(true)
-    muxRouter.HandleFunc("/", homePage)
-    muxRouter.HandleFunc("/books", returnAllBooks)
-    muxRouter.HandleFunc("/books/{id}", returnSingleBook)
+	router := mux.NewRouter().StrictSlash(true)
+	router.HandleFunc("/", homePage)
+	router.HandleFunc("/books", returnAllBooks)
+	router.HandleFunc("/book", createNewBook).Methods("POST")
+	router.HandleFunc("/book/{id}", returnSingleBook).Methods("GET")
+	http.Handle("/",router)
 	port := ":5000"
 	fmt.Printf("Starting server on port %s\n", port)
-	log.Fatal(http.ListenAndServe(port, muxRouter))
+	log.Fatal(http.ListenAndServe(port, router))
 }
 func main() {
 	handleRequests()
