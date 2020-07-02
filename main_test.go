@@ -1,12 +1,11 @@
 package main
 
 import (
-	"encoding/json"
 	"testing"
 	"net/http"
 	"net/http/httptest"
 	"bytes"
-	"fmt"
+	"encoding/json"
 )
 
 
@@ -16,9 +15,9 @@ func checkResponseCode(t *testing.T, expected, actual int) {
     }
 }
 
-func executeRequest(req *http.Request) *httptest.ResponseRecorder {
+func executeRequest(req *http.Request, function func(http.ResponseWriter, *http.Request)) *httptest.ResponseRecorder {
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(returnAllBooks)
+	handler := http.HandlerFunc(function)
 	handler.ServeHTTP(rr, req)
 
     return rr
@@ -30,10 +29,9 @@ func TestReturnAllBooks(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	res := executeRequest(req)
+	res := executeRequest(req,returnAllBooks)
 	checkResponseCode(t, http.StatusOK, res.Code)
 
-	// Check the response body is what we expect.
 	expected := `[{"id":"1","title":"Book1","author":"Author1"},{"id":"2","title":"Book2","author":"Author2"}]`
 	if res.Body.String() != expected {
 		t.Errorf("handler returned unexpected body: got %v want %v",
@@ -47,7 +45,7 @@ func TestReturnSingleBook(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	res := executeRequest(req)
+	res := executeRequest(req, returnSingleBook)
 	checkResponseCode(t, http.StatusOK, res.Code)
 
 	expected := `{"id":"1","title":"Book1","author":"Author1"}`
@@ -65,10 +63,8 @@ func TestCreateNewBook(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	res := executeRequest(req)
+	res := executeRequest(req, createNewBook)
 	checkResponseCode(t, http.StatusOK, res.Code)
-
-	fmt.Println(res)
 
 	var m map[string]interface{}
     json.Unmarshal(res.Body.Bytes(), &m)

@@ -15,7 +15,6 @@ type Book struct {
 	Author string `json:"author"`
 }
 
-// For the purpose of this exercise we won't worry about persistant data so won't be using a database 
 var Books = []Book {
 	Book{Id: "1", Title: "Book1", Author: "Author1"},
 	Book{Id: "2", Title: "Book2", Author: "Author2"},
@@ -61,8 +60,8 @@ func handleRequests() {
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/", homePage)
 	router.HandleFunc("/books", returnAllBooks)
+	router.HandleFunc("/book/{id}", returnSingleBook)
 	router.HandleFunc("/book", createNewBook).Methods("POST")
-	router.HandleFunc("/book/{id}", returnSingleBook).Methods("GET")
 	http.Handle("/",router)
 	port := ":5000"
 	fmt.Printf("Starting server on port %s\n", port)
