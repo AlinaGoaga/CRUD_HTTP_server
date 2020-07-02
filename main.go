@@ -1,4 +1,5 @@
 package main
+
 import (
 	"encoding/json"
 	"fmt"
@@ -37,7 +38,7 @@ func returnSingleBook(w http.ResponseWriter, r *http.Request) {
 
 	for _, book := range Books {
         if book.Id == id {
-            json.NewEncoder(w).Encode(book)
+			json.NewEncoder(w).Encode(book)
         }
 	}
 }
