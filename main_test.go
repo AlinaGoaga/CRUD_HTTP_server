@@ -6,8 +6,6 @@ import (
 	"net/http/httptest"
 	"bytes"
 	"encoding/json"
-	"fmt"
-	"reflect"
 )
 
 
@@ -34,13 +32,9 @@ func TestReturnAllBooks(t *testing.T) {
 	res := executeRequest(req,returnAllBooks)
 	checkResponseCode(t, http.StatusOK, res.Code)
 
-	var expected = `[{"id":"1","title":"Book1","author":"Author1"},{"id":"2","title":"Book2","author":"Author2"}]`
-	
-    fmt.Println(reflect.TypeOf(expected))
+	expected := `[{"id":"1","title":"Book1","author":"Author1"},{"id":"2","title":"Book2","author":"Author2"}]`
 
 	if res.Body.String() != expected {
-		var body = res.Body
-		fmt.Printf(body)
 		t.Errorf("handler returned unexpected body: got %v want %v",
 			res.Body.String(), expected)
 	}
