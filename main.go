@@ -60,13 +60,14 @@ func handleRequests() {
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/", homePage)
 	router.HandleFunc("/books", returnAllBooks)
-	router.HandleFunc("/book/{id}", returnSingleBook)
 	router.HandleFunc("/book", createNewBook).Methods("POST")
-	http.Handle("/",router)
+	router.HandleFunc("/book/{id}", returnSingleBook).Methods("GET")
 	port := ":5000"
+
 	fmt.Printf("Starting server on port %s\n", port)
 	log.Fatal(http.ListenAndServe(port, router))
 }
+
 func main() {
 	handleRequests()
 }

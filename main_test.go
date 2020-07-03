@@ -6,6 +6,8 @@ import (
 	"net/http/httptest"
 	"bytes"
 	"encoding/json"
+	"fmt"
+	"reflect"
 )
 
 
@@ -19,7 +21,7 @@ func executeRequest(req *http.Request, function func(http.ResponseWriter, *http.
 	rr := httptest.NewRecorder()
 	handler := http.HandlerFunc(function)
 	handler.ServeHTTP(rr, req)
-
+	
     return rr
 }
 
@@ -32,8 +34,13 @@ func TestReturnAllBooks(t *testing.T) {
 	res := executeRequest(req,returnAllBooks)
 	checkResponseCode(t, http.StatusOK, res.Code)
 
-	expected := `[{"id":"1","title":"Book1","author":"Author1"},{"id":"2","title":"Book2","author":"Author2"}]`
+	var expected = `[{"id":"1","title":"Book1","author":"Author1"},{"id":"2","title":"Book2","author":"Author2"}]`
+	
+    fmt.Println(reflect.TypeOf(expected))
+
 	if res.Body.String() != expected {
+		var body = res.Body
+		fmt.Printf(body)
 		t.Errorf("handler returned unexpected body: got %v want %v",
 			res.Body.String(), expected)
 	}
@@ -66,10 +73,10 @@ func TestCreateNewBook(t *testing.T) {
 	res := executeRequest(req, createNewBook)
 	checkResponseCode(t, http.StatusOK, res.Code)
 
-	var m map[string]interface{}
-    json.Unmarshal(res.Body.Bytes(), &m)
+	var book map[string]interface{}
+    json.Unmarshal(res.Body.Bytes(), &book)
 
-    if m["id"] != "3" {
-        t.Errorf("Expected book id to be '3'. Got '%v'", m["id"])
+    if book["id"] != "3" {
+        t.Errorf("Expected book id to be '3'. Got '%v'", book["id"])
     }
 }
