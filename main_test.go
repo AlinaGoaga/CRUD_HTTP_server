@@ -2,6 +2,7 @@ package main
 
 import (
 	"testing"
+	"strings"
 	"net/http"
 	"net/http/httptest"
 	"bytes"
@@ -15,12 +16,13 @@ func checkResponseCode(t *testing.T, expected, actual int) {
     }
 }
 
-func executeRequest(req *http.Request, function func(http.ResponseWriter, *http.Request)) *httptest.ResponseRecorder {
+func executeRouterRequest(req *http.Request) *httptest.ResponseRecorder {
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(function)
-	handler.ServeHTTP(rr, req)
+
+	router := routes()
+	router.ServeHTTP(rr, req)
 	
-    return rr
+  return rr
 }
 
 func TestReturnAllBooks(t *testing.T) {
@@ -29,14 +31,15 @@ func TestReturnAllBooks(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	res := executeRequest(req,returnAllBooks)
+	res := executeRouterRequest(req)
 	checkResponseCode(t, http.StatusOK, res.Code)
 
 	expected := `[{"id":"1","title":"Book1","author":"Author1"},{"id":"2","title":"Book2","author":"Author2"}]`
 
-	if res.Body.String() != expected {
+	res_body := strings.TrimSpace(res.Body.String())
+	if res_body != expected {
 		t.Errorf("handler returned unexpected body: got %v want %v",
-			res.Body.String(), expected)
+			res_body, expected)
 	}
 }
 
@@ -46,13 +49,15 @@ func TestReturnSingleBook(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	res := executeRequest(req, returnSingleBook)
+	res := executeRouterRequest(req)
 	checkResponseCode(t, http.StatusOK, res.Code)
 
 	expected := `{"id":"1","title":"Book1","author":"Author1"}`
-	if res.Body.String() != expected {
+
+	res_body := strings.TrimSpace(res.Body.String())
+	if res_body != expected {
 		t.Errorf("handler returned unexpected body: got %v want %v",
-			res.Body.String(), expected)
+			res_body, expected)
 	}
 }
 
@@ -64,7 +69,7 @@ func TestCreateNewBook(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	res := executeRequest(req, createNewBook)
+	res := executeRouterRequest(req)
 	checkResponseCode(t, http.StatusOK, res.Code)
 
 	var book map[string]interface{}

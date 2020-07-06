@@ -56,12 +56,17 @@ func createNewBook(w http.ResponseWriter, r *http.Request) {
     json.NewEncoder(w).Encode(book)
 }
 
-func handleRequests() {
+func routes() *mux.Router {
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/", homePage)
 	router.HandleFunc("/books", returnAllBooks)
 	router.HandleFunc("/book", createNewBook).Methods("POST")
 	router.HandleFunc("/book/{id}", returnSingleBook).Methods("GET")
+	return router
+}
+
+func handleRequests() {
+    router := routes()
 	port := ":5000"
 
 	fmt.Printf("Starting server on port %s\n", port)
