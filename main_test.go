@@ -1,18 +1,18 @@
 package main
 
 import (
-	"testing"
-	"strings"
-	"net/http"
-	"net/http/httptest"
 	"bytes"
 	"encoding/json"
+	"net/http"
+	"net/http/httptest"
+	"strings"
+	"testing"
 )
 
 func checkResponseCode(t *testing.T, expected, actual int) {
-    if expected != actual {
-        t.Errorf("Expected response code %d. Got %d\n", expected, actual)
-    }
+	if expected != actual {
+		t.Errorf("Expected response code %d. Got %d\n", expected, actual)
+	}
 }
 
 func executeRouterRequest(req *http.Request) *httptest.ResponseRecorder {
@@ -20,8 +20,8 @@ func executeRouterRequest(req *http.Request) *httptest.ResponseRecorder {
 
 	router := routes()
 	router.ServeHTTP(rr, req)
-	
-  return rr
+
+	return rr
 }
 
 func TestReturnAllBooks(t *testing.T) {
@@ -68,7 +68,7 @@ func TestDeleteBook(t *testing.T) {
 
 	res := executeRouterRequest(req)
 	checkResponseCode(t, http.StatusOK, res.Code)
-	
+
 	// check if I can still get the book
 	req, _ = http.NewRequest("GET", "/book/1", nil)
 	get_single_res := executeRouterRequest(req)
@@ -87,7 +87,7 @@ func TestDeleteBook(t *testing.T) {
 }
 
 func TestCreateNewBook(t *testing.T) {
-    payload := []byte(`{"id":"3","title":"Book3","author":"Author3"}`)
+	payload := []byte(`{"id":"3","title":"Book3","author":"Author3"}`)
 
 	req, err := http.NewRequest("POST", "/book", bytes.NewBuffer(payload))
 	if err != nil {
@@ -98,9 +98,9 @@ func TestCreateNewBook(t *testing.T) {
 	checkResponseCode(t, http.StatusOK, res.Code)
 
 	var book map[string]interface{}
-    json.Unmarshal(res.Body.Bytes(), &book)
+	json.Unmarshal(res.Body.Bytes(), &book)
 
-    if book["id"] != "3" {
-        t.Errorf("Expected book id to be '3'. Got '%v'", book["id"])
-    }
+	if book["id"] != "3" {
+		t.Errorf("Expected book id to be '3'. Got '%v'", book["id"])
+	}
 }

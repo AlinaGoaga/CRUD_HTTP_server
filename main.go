@@ -3,19 +3,20 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
-	"io/ioutil"
 
 	"github.com/gorilla/mux"
 )
+
 type Book struct {
 	Id     string `json:"id"`
 	Title  string `json:"title"`
 	Author string `json:"author"`
 }
 
-var Books = []Book {
+var Books = []Book{
 	Book{Id: "1", Title: "Book1", Author: "Author1"},
 	Book{Id: "2", Title: "Book2", Author: "Author2"},
 }
@@ -33,13 +34,13 @@ func returnAllBooks(w http.ResponseWriter, r *http.Request) {
 func returnSingleBook(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
-	
+
 	fmt.Println("Endpoint Hit: returnSingleBook")
 
 	for _, book := range Books {
-        if book.Id == id {
+		if book.Id == id {
 			json.NewEncoder(w).Encode(book)
-        }
+		}
 	}
 }
 
@@ -47,26 +48,26 @@ func createNewBook(w http.ResponseWriter, r *http.Request) {
 	reqBody, _ := ioutil.ReadAll(r.Body)
 	var book Book
 	json.Unmarshal(reqBody, &book)
-		
+
 	fmt.Println("Endpoint Hit: createNewBook")
 
-    Books = append(Books, book)
-    json.NewEncoder(w).Encode(book)
+	Books = append(Books, book)
+	json.NewEncoder(w).Encode(book)
 }
 
 func deleteBook(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
-	
+
 	fmt.Println("Endpoint Hit: deleteBook")
 
 	for index, book := range Books {
-        if book.Id == id {
+		if book.Id == id {
 			Books = append(Books[:index], Books[index+1:]...)
-        }
+		}
 	}
 	json.NewEncoder(w).Encode(Books)
-  }
+}
 
 func routes() *mux.Router {
 	router := mux.NewRouter().StrictSlash(true)
@@ -79,7 +80,7 @@ func routes() *mux.Router {
 }
 
 func handleRequests() {
-    router := routes()
+	router := routes()
 	port := ":5000"
 
 	fmt.Printf("Starting server on port %s\n", port)
