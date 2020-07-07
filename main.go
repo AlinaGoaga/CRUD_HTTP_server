@@ -45,8 +45,6 @@ func returnSingleBook(w http.ResponseWriter, r *http.Request) {
 
 func createNewBook(w http.ResponseWriter, r *http.Request) {
 	reqBody, _ := ioutil.ReadAll(r.Body)
-
-	// transform the response body to a new Book object which we can then add to the array aka fake database
 	var book Book
 	json.Unmarshal(reqBody, &book)
 		
@@ -56,12 +54,27 @@ func createNewBook(w http.ResponseWriter, r *http.Request) {
     json.NewEncoder(w).Encode(book)
 }
 
+func deleteBook(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id := vars["id"]
+	
+	fmt.Println("Endpoint Hit: deleteBook")
+
+	for index, book := range Books {
+        if book.Id == id {
+			Books = append(Books[:index], Books[index+1:]...)
+        }
+	}
+	json.NewEncoder(w).Encode(Books)
+  }
+
 func routes() *mux.Router {
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/", homePage)
 	router.HandleFunc("/books", returnAllBooks)
 	router.HandleFunc("/book", createNewBook).Methods("POST")
 	router.HandleFunc("/book/{id}", returnSingleBook).Methods("GET")
+	router.HandleFunc("/book/{id}", deleteBook).Methods("DELETE")
 	return router
 }
 
