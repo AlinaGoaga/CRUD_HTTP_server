@@ -1,0 +1,20 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+    labels:
+        app: mycrudapp
+    name: mycrudapp
+spec:
+    replicas: 2
+    selector:
+        matchLabels:
+            app: mycrudapp
+    template:
+        metadata:
+            labels:
+                app: mycrudapp
+        spec:
+            containers:
+            - image: alinag1/mycrudapp
+              imagePullPolicy: IfNotPresent
+              name: mycrudapp
