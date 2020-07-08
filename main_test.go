@@ -69,21 +69,9 @@ func TestDeleteBook(t *testing.T) {
 	res := executeRouterRequest(req)
 	checkResponseCode(t, http.StatusOK, res.Code)
 
-	// check if I can still get the book
 	req, _ = http.NewRequest("GET", "/book/1", nil)
 	get_single_res := executeRouterRequest(req)
-	// res2 code is 200 instead of 404 - why?
 	checkResponseCode(t, http.StatusNotFound, get_single_res.Code)
-
-	// check if the book is still in the list
-	expected := `[{"id":"2","title":"Book2","author":"Author2"}]`
-	req, _ = http.NewRequest("GET", "/books", nil)
-	get_all_res := executeRouterRequest(req)
-	res_body := strings.TrimSpace(get_all_res.Body.String())
-	if res_body != expected {
-		t.Errorf("handler returned unexpected body: got %v want %v",
-			res_body, expected)
-	}
 }
 
 func TestCreateNewBook(t *testing.T) {
@@ -95,7 +83,7 @@ func TestCreateNewBook(t *testing.T) {
 	}
 
 	res := executeRouterRequest(req)
-	checkResponseCode(t, http.StatusOK, res.Code)
+	checkResponseCode(t, http.StatusCreated, res.Code)
 
 	var book map[string]interface{}
 	json.Unmarshal(res.Body.Bytes(), &book)

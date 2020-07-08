@@ -40,6 +40,8 @@ func returnSingleBook(w http.ResponseWriter, r *http.Request) {
 	for _, book := range Books {
 		if book.Id == id {
 			json.NewEncoder(w).Encode(book)
+		} else { 
+			w.WriteHeader(http.StatusNotFound)
 		}
 	}
 }
@@ -52,6 +54,8 @@ func createNewBook(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Endpoint Hit: createNewBook")
 
 	Books = append(Books, book)
+
+	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(book)
 }
 
