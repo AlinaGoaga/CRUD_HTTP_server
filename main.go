@@ -40,7 +40,7 @@ func returnSingleBook(w http.ResponseWriter, r *http.Request) {
 	for _, book := range Books {
 		if book.Id == id {
 			json.NewEncoder(w).Encode(book)
-		} else { 
+		} else {
 			w.WriteHeader(http.StatusNotFound)
 		}
 	}
