@@ -4,21 +4,21 @@ Simple REST API to retrieve, add and delete books. Data is managed in the app vi
 
 This requires the instalation of gorilla/mux: `go get -u github.com/gorilla/mux`
 
-Run the app: `go run main.go` 
+* Run the app: `go run main.go` 
 
-Run the tests: `go test -v`
+* Run the tests: `go test -v`
 
-App image at: alinag1/mycrudapp
+* App image at: alinag1/mycrudapp
 
-Create deployment: `kubectl create -f deployment.yml`
-Create service: `kubectl create mycrudapp-svc.yml`
-See resources: `kubectl get all`
+* Create deployment: `kubectl create -f deployment.yml`
+* Create service: `kubectl create mycrudapp-svc.yml`
+* See resources: `kubectl get all`
 
-Create ingress: `kubectl create -f ingress.yml`
-See ingress: `kubectl get ingress mycrudapp`
+* Create ingress: `kubectl create -f ingress.yml`
+* See ingress: `kubectl get ingress mycrudapp`
 
-Get access to one of the pods and open terminal: `kubectl exec -it pod/mycrudapp-7d65644c4-lkqbw -- /bin/sh`
+* Get access to one of the pods and open terminal: `kubectl exec -it pod/mycrudapp-7d65644c4-lkqbw -- /bin/sh`
 
-`curl http://mycrudapp-svc:5000/books` or check app in the browser: 
+* Check app: `curl http://mycrudapp-svc:5000/books` or in the browser by running
 
 `kubectl port-forward deployment/mycrudapp 5000:5000` (visit `http://localhost:5000/`)
