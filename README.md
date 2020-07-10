@@ -11,14 +11,21 @@ This requires the instalation of gorilla/mux: `go get -u github.com/gorilla/mux`
 * App image at: alinag1/mycrudapp
 
 * Create deployment: `kubectl create -f deployment.yml`
-* Create service: `kubectl create mycrudapp-svc.yml`
+* Create service: `kubectl create -f mycrudapp-svc.yml`
 * See resources: `kubectl get all`
-
-* Create ingress: `kubectl create -f ingress.yml`
-* See ingress: `kubectl get ingress mycrudapp`
 
 * Get access to one of the pods and open terminal: `kubectl exec -it pod/mycrudapp-7d65644c4-lkqbw -- /bin/sh`
 
 * Check app: `curl http://mycrudapp-svc:5000/books` or in the browser by running
 
 `kubectl port-forward deployment/mycrudapp 5000:5000` (visit `http://localhost:5000/`)
+
+Expose the app to the outside world with ingress: 
+
+* Create the ingress resource: `kubectl apply -f ingress.yml`
+
+* Add the NGINX ingress controller on the cluster: `https://kind.sigs.k8s.io/docs/user/ingress/`
+I am using kind locally. 
+
+* The app should now be visible from outside the cluster (check with `curl http://localhost` or directly in the browser).
+
