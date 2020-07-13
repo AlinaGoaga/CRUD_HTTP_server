@@ -1,4 +1,4 @@
-# CRUD_HTTP_server - WIP 
+# CRUD_HTTP_server
 
 Simple REST API to retrieve, add and delete books. Data is managed in the app via variables (rather than interacting with a database).
 
